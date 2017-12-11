@@ -59,18 +59,20 @@ public class MyLinkedHashMap<K,V> implements Map {
         return  hash & (capacity - 1);
     }
 
-//    public void show() {
-//        for (int i = 0; i < capacity; i++) {
-//            if (backets[i] != null) {
-//                Entry entity = (Entry) backets[i];
-//                while (entity != null) {
-//                    System.out.print(entity.key + " >> " + entity.value + "; ");
-//                    entity = entity.next;
-//                }
-//                System.out.println();
-//            }
-//        }
-//    }
+    public void show() {
+        for (int i = 0; i < capacity; i++) {
+            if (backets[i] != null) {
+                Entry entry = (Entry) backets[i];
+                while (entry != null) {
+                    System.out.print(entry.key + " >> " + entry.value + "; ");
+                    entry = entry.next;
+                }
+                System.out.println();
+            } else {
+                System.out.println("null");
+            }
+        }
+    }
 //
 //    public void showAsAdd() {
 //        if (head != null) {
@@ -92,6 +94,8 @@ public class MyLinkedHashMap<K,V> implements Map {
 
     private void checkResize() {
         if ((int)(count * loadFactor) >= capacity) {
+            //show();
+            System.out.println();
             capacity = capacity * 2;
             Object[] new_backets = new Object[capacity];
             count = 0;
@@ -102,6 +106,7 @@ public class MyLinkedHashMap<K,V> implements Map {
                 addToAnyArray(new_backets, (K)entry.key, (V)entry.value);
             }
             backets = new_backets;
+            //System.out.println("Rebuild LinkedHashMap; Up to " + capacity + " backets");
         }
     }
 
@@ -127,6 +132,9 @@ public class MyLinkedHashMap<K,V> implements Map {
             addIntoLinkedList(entry);
         }
     }
+    private Entry<K, V> find(Object key) {
+        return null;
+    }
 
     @Override
     public Object put(Object key, Object value) {
@@ -148,7 +156,7 @@ public class MyLinkedHashMap<K,V> implements Map {
 
     @Override
     public boolean containsKey(Object key) {
-        return false;
+        return get(key) != null;
     }
 
     @Override
@@ -162,11 +170,15 @@ public class MyLinkedHashMap<K,V> implements Map {
         for (int i = 0; i < capacity; i++) {
             if (backets[i] != null) {
                 Entry temp = (Entry)backets[i];
-                while (temp != null) {
-                    if (key.equals(temp.key)) {
-                        return temp.value;
+                if (temp.hash == hash) {
+                    while (temp != null) {
+                        if (key.equals(temp.key)) {
+                            return temp.value;
+                        }
+                        temp = temp.next;
                     }
-                    temp = temp.next;
+                } else {
+                    continue;
                 }
             }
         }

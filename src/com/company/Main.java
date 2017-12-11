@@ -12,17 +12,21 @@ public class Main {
         for (int i = 0; i < 50; i++) {
             map.put("string" + i, random.nextInt(100));
         }
+        map.put("string0", 100);
+
 //        System.out.println();
-//        map.show();
+        //map.show();
 //        System.out.println();
 
-        //чтение
+//        //чтение
         for (MyLinkedHashMap.Entry entry : map.entrySet()) {
             System.out.println(entry.getKey() + " - " + entry.getValue());
         }
         System.out.println();
-        // извлечение из LinkedHashMap
+//        // извлечение из LinkedHashMap
         System.out.println(map.get("string5"));
+        System.out.println(map.containsKey("string5"));
+        System.out.println(map.containsKey("string5 no this string"));
 
     }
 }
