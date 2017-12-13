@@ -50,6 +50,18 @@ public class MyLinkedHashMap<K,V> implements Map {
             this.value = (V)value;
             return null;
         }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "hash=" + hash +
+                    ", key=" + key +
+                    ", value=" + value +
+                    ", next=" + next +
+                    ", before=" + before +
+                    ", after=" + after +
+                    '}';
+        }
     }
 
     public MyLinkedHashMap() {
@@ -72,9 +84,9 @@ public class MyLinkedHashMap<K,V> implements Map {
                     System.out.print(i + ": " + entry.key + " >> " + entry.value + "; ");
                     entry = entry.next;
                 }
-                System.out.println();
+//                System.out.println();
             } else {
-                System.out.println("null");
+                System.out.println(backets[i]);
             }
         }
     }
@@ -208,7 +220,7 @@ public class MyLinkedHashMap<K,V> implements Map {
             Entry temp = (Entry)backets[i];
             Entry previous = null;
             if (temp != null) {
-                System.out.println(temp.hash + " >> " + hash(key));
+                //System.out.println(temp.hash + " >> " + hash(key));
             }
             if (temp != null && temp.hash == hash(key)) {
                 while (temp != null) {
