@@ -33,6 +33,10 @@ public class MyLinkedHashMap<K,V> implements Map {
             this.hash = hash;
         }
 
+        public void setKey(K key) {
+            this.key = key;
+        }
+
         public K getKey() {
             return key;
         }
@@ -43,6 +47,7 @@ public class MyLinkedHashMap<K,V> implements Map {
 
         @Override
         public Object setValue(Object value) {
+            this.value = (V)value;
             return null;
         }
     }
@@ -51,7 +56,7 @@ public class MyLinkedHashMap<K,V> implements Map {
         backets = new Object[capacity];
     }
 
-    private int hash(K key) {
+    private int hash(Object key) {
         return key.hashCode() ^ (key.hashCode()>>>16);
     }
 
@@ -64,7 +69,7 @@ public class MyLinkedHashMap<K,V> implements Map {
             if (backets[i] != null) {
                 Entry entry = (Entry) backets[i];
                 while (entry != null) {
-                    System.out.print(entry.key + " >> " + entry.value + "; ");
+                    System.out.print(i + ": " + entry.key + " >> " + entry.value + "; ");
                     entry = entry.next;
                 }
                 System.out.println();
@@ -95,7 +100,7 @@ public class MyLinkedHashMap<K,V> implements Map {
     private void checkResize() {
         if ((int)(count * loadFactor) >= capacity) {
             //show();
-            System.out.println();
+            //System.out.println();
             capacity = capacity * 2;
             Object[] new_backets = new Object[capacity];
             count = 0;
@@ -104,6 +109,7 @@ public class MyLinkedHashMap<K,V> implements Map {
             tail = null;
             for (MyLinkedHashMap.Entry entry : currentEntrySet) {
                 addToAnyArray(new_backets, (K)entry.key, (V)entry.value);
+                count++;
             }
             backets = new_backets;
             //System.out.println("Rebuild LinkedHashMap; Up to " + capacity + " backets");
@@ -132,15 +138,32 @@ public class MyLinkedHashMap<K,V> implements Map {
             addIntoLinkedList(entry);
         }
     }
-    private Entry<K, V> find(Object key) {
+
+    private Entry find(K key) {
+        for (int i = 0; i < capacity; i++) {
+            Entry temp = (Entry) backets[i];
+            if (temp != null && temp.hash == hash(key)) {
+                while (temp != null) {
+                    if (key.equals(temp.getKey())) {
+                        return temp;
+                    }
+                    temp = temp.next;
+                }
+            }
+        }
         return null;
     }
 
     @Override
     public Object put(Object key, Object value) {
-        checkResize();
-        addToAnyArray(backets, (K)key, (V)value);
-        count++;
+        Entry entry = find((K)key);
+        if (entry != null) {
+            entry.setValue((V)value);
+        } else {
+            checkResize();
+            addToAnyArray(backets, (K)key, (V)value);
+            count++;
+        }
         return null;
     }
 
@@ -161,32 +184,50 @@ public class MyLinkedHashMap<K,V> implements Map {
 
     @Override
     public boolean containsValue(Object value) {
+        for (Entry entry : this.entrySet()) {
+            if (entry.value.equals(value)) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public Object get(Object key) {
-        int hash = hash((K)key);
-        for (int i = 0; i < capacity; i++) {
-            if (backets[i] != null) {
-                Entry temp = (Entry)backets[i];
-                if (temp.hash == hash) {
-                    while (temp != null) {
-                        if (key.equals(temp.key)) {
-                            return temp.value;
-                        }
-                        temp = temp.next;
-                    }
-                } else {
-                    continue;
-                }
-            }
+        Object result = find((K)key);
+        if (result != null) {
+            return ((Entry)result).getValue();
+        } else {
+            return null;
         }
-        return null;
     }
 
     @Override
     public Object remove(Object key) {
+        for (int i = 0; i < capacity; i++) {
+            Entry temp = (Entry)backets[i];
+            Entry previous = null;
+            if (temp != null) {
+                System.out.println(temp.hash + " >> " + hash(key));
+            }
+            if (temp != null && temp.hash == hash(key)) {
+                while (temp != null) {
+                    if (temp.getKey().equals(key)) {
+                        if (previous == null) {
+                            backets[i] = temp.next;
+                            count--;
+                            return temp.getValue();
+                        } else {
+                            previous.next = temp.next;
+                            count--;
+                            return temp.getValue();
+                        }
+                    }
+                    previous = temp;
+                    temp = temp.next;
+                }
+            }
+        }
         return null;
     }
 
