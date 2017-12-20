@@ -2,7 +2,7 @@ package com.company;
 
 import java.util.*;
 
-public class ListBench {
+public class MapBenchMark {
 
     private static LinkedHashMap<Integer, Integer> utilMap1M = new LinkedHashMap<>();
     private static CustomLinkedHashMap<Integer, Integer> customMap1M = new CustomLinkedHashMap<>();

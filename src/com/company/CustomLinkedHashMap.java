@@ -10,28 +10,19 @@ public class CustomLinkedHashMap<K, V> implements Map {
         int hash;
         private Entry head;
 
-        public Bucket(Entry head, int hash) {
+        private Bucket(Entry head, int hash) {
             this.head = head;
             this.hash = hash;
         }
-
-        public Entry<K, V> getHead() {
-            return head;
-        }
-
-        public void setHead(Entry head) {
-            this.head = head;
-        }
     }
-
 
     public class Entry<K, V> implements Map.Entry<K, V> {
 
-        K key;
-        V value;
-        Entry next;
-        Entry before;
-        Entry after;
+        private K key;
+        private V value;
+        private  Entry next;
+        private Entry before;
+        private Entry after;
 
         public Entry(K key, V value) {
             this.key = key;
@@ -39,23 +30,8 @@ public class CustomLinkedHashMap<K, V> implements Map {
             this.next = null;
         }
 
-        public Entry(K key, V value, Entry before, Entry after) {
-            this.key = key;
-            this.value = value;
-            this.before = before;
-            this.after = after;
-        }
-
-        public Entry copyWithoutNext() {
-            return new Entry(this.key, this.value, this.before, this.after);
-        }
-
         public K getKey() {
             return key;
-        }
-
-        public void setKey(K key) {
-            this.key = key;
         }
 
         public V getValue() {
@@ -66,14 +42,6 @@ public class CustomLinkedHashMap<K, V> implements Map {
         public V setValue(Object value) {
             this.value = (V) value;
             return null;
-        }
-
-        private void setNext(Entry nextEntry) {
-            this.next = nextEntry;
-        }
-
-        private Entry getNext() {
-            return next;
         }
 
         @Override
@@ -194,18 +162,6 @@ public class CustomLinkedHashMap<K, V> implements Map {
         }
     }
 
-    private void show() {
-        for (int i = 0; i < capacity; i++) {
-            System.out.print(i);
-            Entry link = ((Bucket) buckets[i]).head;
-            while (link != null) {
-                System.out.print(" >> " + link.value);
-                link = link.next;
-            }
-            System.out.println();
-        }
-    }
-
     private Entry addToHashTable(Object[] buckets, HashIndex hashIndex, Entry entry) {
         Bucket bucket = (Bucket) buckets[hashIndex.index];
         Entry link = bucket.head;
@@ -304,7 +260,8 @@ public class CustomLinkedHashMap<K, V> implements Map {
     public void clear() {
         head = null;
         tail = null;
-        buckets = new Object[16];
+        capacity = 16;
+        buckets = new Object[capacity];
         initBuckets(buckets);
         count = 0;
     }
@@ -324,11 +281,11 @@ public class CustomLinkedHashMap<K, V> implements Map {
     public Collection values() {
         Collection<V> result = new ArrayList<>();
         Entry link = head;
-        while (link != head) {
+        while (link != null) {
             result.add((V)link.getValue());
             link = link.after;
         }
-        return null;
+        return result;
     }
 
     @Override
